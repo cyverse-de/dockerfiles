@@ -1194,4 +1194,4 @@ VOLUME ["/usr/local2/", "/usr/local3/", "/data2/", "/condor01/"]
 CMD ["/bin/bash"]
 
 ARG git_commit=unknown
-LABEL org.iplantc.de.backwards-compat.git-ref="$git_commit"
+LABEL org.cyverse.git-ref="$git_commit"
