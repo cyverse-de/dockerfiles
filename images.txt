@@ -1,8 +1,6 @@
 anon-files
-app-registration
 clockwork
 condor-launcher
-condor-log-monitor
 curl-wrapper
 data-info
 de
