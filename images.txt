@@ -16,7 +16,6 @@ iplant-groups
 jex-adapter
 job-status-recorder
 job-status-to-apps-adapter
-jobservices
 kifshare
 apps
 metadata
