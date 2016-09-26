@@ -1,5 +1,5 @@
 node('docker && sshdir') {
-    checkout scm
+    git url: "https://github.com/cyverse-de/dockerfiles"
     dir('ansible-docker') {
         stage('Build image') {
             sh "docker build --rm -t discoenv/de-ansible:dev ."
