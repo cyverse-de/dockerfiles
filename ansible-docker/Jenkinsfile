@@ -1,0 +1,11 @@
+node('docker && sshdir') {
+    checkout scm
+    dir('ansible-docker') {
+        stage('Build image') {
+            sh "docker build --rm -t discoenv/de-ansible:dev ."
+        }
+        stage('Push image') {
+            sh "docker push discoenv/de-ansible:dev"
+        }
+    }
+}
