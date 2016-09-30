@@ -1,11 +1,17 @@
-node('docker && sshdir') {
+node('docker') {
     git url: "https://github.com/cyverse-de/dockerfiles"
     dir('ansible-docker') {
-        stage('Build image') {
+        stage('Build & push image') {
             sh "docker build --pull --rm -t discoenv/de-ansible:dev ."
-        }
-        stage('Push image') {
-            sh "docker push discoenv/de-ansible:dev"
+            withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'jenkins-docker-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME']]) {
+                sh """docker run -e DOCKER_USERNAME -e DOCKER_PASSWORD \\
+                                 -v /var/run/docker.sock:/var/run/docker.sock --rm \\
+                                 docker:\$(docker version --format '{{ .Server.Version }}') \\
+                                 sh -e -c \\
+                      'docker login -u \"\$DOCKER_USERNAME\" -p \"\$DOCKER_PASSWORD\" && \\
+                       docker push discoenv/de-ansible:dev && \\
+                       docker logout'"""
+            }
         }
     }
 }
