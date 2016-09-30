@@ -2,7 +2,7 @@ node('docker && sshdir') {
     git url: "https://github.com/cyverse-de/dockerfiles"
     dir('ansible-docker') {
         stage('Build image') {
-            sh "docker build --rm -t discoenv/de-ansible:dev ."
+            sh "docker build --pull --rm -t discoenv/de-ansible:dev ."
         }
         stage('Push image') {
             sh "docker push discoenv/de-ansible:dev"
