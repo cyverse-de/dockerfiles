@@ -14,10 +14,10 @@ retrieve=true
 while getopts :rR opt; do
     case $opt in
         r)
-            retrieve=false
+            retrieve=true
             ;;
         R)
-            retrieve=true
+            retrieve=false
             ;;
         \?)
             echo $usage
