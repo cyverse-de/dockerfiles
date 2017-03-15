@@ -10,7 +10,7 @@ COPY configs /tmp/configs
 ENV ANT_HOME /opt/apache-ant
 ENV PATH $PATH:$ANT_HOME/bin
 ENV ANT_BASE https://www.apache.org/dist/ant/binaries
-ENV ANT_VERSION 1.9.6
+ENV ANT_VERSION 1.9.9
 ENV ANT_URL $ANT_BASE/apache-ant-$ANT_VERSION-bin.tar.gz
 
 # Environment variables for tomcat.
@@ -37,6 +37,10 @@ ENV GROUPER_HOME $GROUPER_BASE/api
 ENV GROUPER_UI_HOME $GROUPER_BASE/ui
 ENV GROUPER_WS_HOME $GROUPER_BASE/ws
 ENV PATH $GROUPER_HOME/bin:$PATH
+
+# Environment vairables for Bouncy Castle
+ENV BCPROV_BASE http://bouncycastle.org/download
+ENV BCPROV_JAR bcprov-jdk15on-156.jar
 
 RUN apk add --update curl \
     && mkdir -p /tmp/jce \
@@ -94,11 +98,13 @@ RUN apk add --update curl \
     && cd "$GROUPER_BASE" \
     && tar -xzvf /tmp/tarballs/grouper-api.tar.gz \
     && mv "grouper.apiBinary-$GROUPER_VERSION" "$GROUPER_HOME" \
+    && mv /tmp/configs/api/ehcache.xml "$GROUPER_HOME/conf/" \
     && mv /tmp/configs/api/grouper.properties "$GROUPER_HOME/conf/" \
     && mv /tmp/configs/api/grouper.hibernate.properties "$GROUPER_HOME/conf/" \
     && mv /tmp/configs/api/grouper-loader.properties "$GROUPER_HOME/conf/" \
     && mv /tmp/configs/api/subject.properties "$GROUPER_HOME/conf" \
     && mv /tmp/configs/api/log4j.properties "$GROUPER_HOME/conf" \
+    && curl -fSL "$BCPROV_BASE/$BCPROV_JAR" -o "$GROUPER_HOME/lib/grouper/$BCPROV_JAR" \
     \
     && cd "$GROUPER_BASE" \
     && tar -xzvf /tmp/tarballs/grouper-ui.tar.gz \
