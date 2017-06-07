@@ -10,6 +10,4 @@ ENV CONFIGPROXY_AUTH_TOKEN=unsafe-default
 
 EXPOSE 8000 8001
 
-ENTRYPOINT ["configurable-http-proxy"]
-
-CMD ["--api-ip", "0.0.0.0"]
+ENTRYPOINT ["configurable-http-proxy", "--api-ip", "0.0.0.0"]
