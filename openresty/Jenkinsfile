@@ -1,0 +1,13 @@
+node('docker') {
+    git url: "https://github.com/cyverse-de/dockerfiles"
+    dir('openresty') {
+        stage('Build & push image') {
+            withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'jenkins-docker-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME']]) {
+                sh """docker build --rm -t discoenv/openresty:master . && \\
+                      docker login -u \"\$DOCKER_USERNAME\" -p \"\$DOCKER_PASSWORD\" && \\
+                      docker push discoenv/openresty:master && \\
+                      docker logout"""
+            }
+        }
+    }
+}
