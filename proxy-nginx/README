@@ -1,0 +1,5 @@
+Reverse Proxy Nginx
+===================
+
+An nginx container image based on the official nginx image, modified to act as
+the Discovery Environment's outward facing reverse-proxy for interactive apps.
