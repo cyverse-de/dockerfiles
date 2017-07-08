@@ -65,22 +65,35 @@ mkdir -p "$GROUPER_BASE" "$GROUPER_LOGS" "$GROUPER_CONF" "$GROUPER_TEMP"
 cd "$GROUPER_BASE"
 tar -xzvf /tmp/tarballs/grouper-api.tar.gz
 mv "grouper.apiBinary-$GROUPER_VERSION" "$GROUPER_HOME"
+
+# Copy the custom configuration files to the configuration directory.
 mv /tmp/configs/api/ehcache.xml "$GROUPER_HOME/conf/"
 mv /tmp/configs/api/grouper.properties "$GROUPER_HOME/conf/"
 mv /tmp/configs/api/grouper.hibernate.properties "$GROUPER_HOME/conf/"
 mv /tmp/configs/api/grouper-loader.properties "$GROUPER_HOME/conf/"
 mv /tmp/configs/api/subject.properties "$GROUPER_HOME/conf"
 mv /tmp/configs/api/log4j.properties "$GROUPER_HOME/conf"
+
+# Add the BouncyCastle provider JAR file into the lib directory.
 curl -fSL "$BCPROV_BASE/$BCPROV_JAR" -o "$GROUPER_HOME/lib/grouper/$BCPROV_JAR"
 
 # Extract the Grouper UI.
 cd "$GROUPER_BASE"
 tar -xzvf /tmp/tarballs/grouper-ui.tar.gz
 mv "grouper.ui-$GROUPER_VERSION" "$GROUPER_UI_HOME"
+
+# Build the Grouper UI.
 mv /tmp/configs/ui/build.properties "$GROUPER_UI_HOME"
 cd "$GROUPER_UI_HOME"
 ant war
+
+# Copy the WAR file to the webapps directory and expand it.
 cp dist/grouper.war "$CATALINA_HOME/webapps"
+mkdir "$CATALINA_HOME/webapps/grouper"
+cd "$CATALINA_HOME/webapps/grouper"
+jar xvf ../grouper.war
+
+# Clean up the directory used to build the Grouper UI.
 cd "$GROUPER_BASE"
 rm -rf "$GROUPER_UI_HOME"
 
@@ -88,11 +101,20 @@ rm -rf "$GROUPER_UI_HOME"
 cd "$GROUPER_BASE"
 tar -xzvf /tmp/tarballs/grouper-ws.tar.gz
 mv "grouper.ws-$GROUPER_VERSION" "$GROUPER_WS_HOME"
+
+# Build the Grouper web services.
 mv /tmp/configs/ws/build.properties "$GROUPER_WS_HOME/grouper-ws/"
 mv /tmp/configs/ws/grouper-ws.properties "$GROUPER_WS_HOME/grouper-ws/conf/"
 cd "$GROUPER_WS_HOME/grouper-ws"
 ant dist
+
+# Copy the WAR file to the webapps directory and expand it.
 cp build/dist/grouper-ws.war "$CATALINA_HOME/webapps"
+mkdir "$CATALINA_HOME/webapps/grouper-ws"
+cd "$CATALINA_HOME/webapps/grouper-ws"
+jar xvf ../grouper-ws.war
+
+# Clean up the directory used to build the Grouper web services.
 cd "$GROUPER_BASE"
 rm -rf "$GROUPER_WS_HOME"
 
