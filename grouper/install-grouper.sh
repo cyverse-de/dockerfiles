@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 # Install curl.
 apk add --update curl
 
@@ -118,9 +120,29 @@ jar xvf ../grouper-ws.war
 cd "$GROUPER_BASE"
 rm -rf "$GROUPER_WS_HOME"
 
+# Download the Grouper installer.
+cd /tmp/patch
+curl -fSL "$GROUPER_BASE_URL/$GROUPER_INS_JAR" -o "$GROUPER_INS_JAR"
+
+# Patch the Grouper API.
+ln -s api.properties grouper.installer.properties
+java -cp .:$GROUPER_INS_JAR edu.internet2.middleware.grouperInstaller.GrouperInstaller
+rm grouper.installer.properties
+
+# Patch the Grouper UI.
+ln -s ui.properties grouper.installer.properties
+java -cp .:$GROUPER_INS_JAR edu.internet2.middleware.grouperInstaller.GrouperInstaller
+rm grouper.installer.properties
+
+# Patch the Grouepr web services.
+ln -s ws.properties grouper.installer.properties
+java -cp .:$GROUPER_INS_JAR edu.internet2.middleware.grouperInstaller.GrouperInstaller
+rm grouper.installer.properties
+
 # Clean up.
 apk del gnupg
 apk del curl
 rm -rf /var/cache/apk/*
 rm -rf /tmp/configs
+rm -rf /tmp/patch
 rm -rf /tmp/tarballs

@@ -6,6 +6,9 @@ LABEL org.iplantc.de.grouper.git-ref="$git_commit"
 # Copy the configuration files to temporary locations.
 COPY configs /tmp/configs
 
+# Copy the patch property files to temporary locations.
+COPY patch /tmp/patch
+
 # Environment variables for ant.
 ENV ANT_HOME /opt/apache-ant
 ENV PATH $PATH:$ANT_HOME/bin
@@ -29,6 +32,7 @@ ENV GROUPER_BASE_URL http://software.internet2.edu/grouper/release/$GROUPER_VERS
 ENV GROUPER_API_TGZ grouper.apiBinary-$GROUPER_VERSION.tar.gz
 ENV GROUPER_UI_TGZ grouper.ui-$GROUPER_VERSION.tar.gz
 ENV GROUPER_WS_TGZ grouper.ws-$GROUPER_VERSION.tar.gz
+ENV GROUPER_INS_JAR grouperInstaller.jar
 ENV GROUPER_BASE /opt/grouper
 ENV GROUPER_LOGS /var/log/grouper
 ENV GROUPER_CONF /etc/grouper
