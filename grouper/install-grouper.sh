@@ -79,6 +79,15 @@ mv /tmp/configs/api/log4j.properties "$GROUPER_HOME/conf"
 # Add the BouncyCastle provider JAR file into the lib directory.
 curl -fSL "$BCPROV_BASE/$BCPROV_JAR" -o "$GROUPER_HOME/lib/grouper/$BCPROV_JAR"
 
+# Download the Grouper installer.
+cd /tmp/patch
+curl -fSL "$GROUPER_BASE_URL/$GROUPER_INS_JAR" -o "$GROUPER_INS_JAR"
+
+# Patch the Grouper API.
+ln -s api.properties grouper.installer.properties
+java -cp .:$GROUPER_INS_JAR edu.internet2.middleware.grouperInstaller.GrouperInstaller
+rm grouper.installer.properties
+
 # Extract the Grouper UI.
 cd "$GROUPER_BASE"
 tar -xzvf /tmp/tarballs/grouper-ui.tar.gz
@@ -98,6 +107,12 @@ jar xvf ../grouper.war
 # Clean up the directory used to build the Grouper UI.
 cd "$GROUPER_BASE"
 rm -rf "$GROUPER_UI_HOME"
+
+# Patch the Grouper UI.
+cd /tmp/patch
+ln -s ui.properties grouper.installer.properties
+java -cp .:$GROUPER_INS_JAR edu.internet2.middleware.grouperInstaller.GrouperInstaller
+rm grouper.installer.properties
 
 # Etract the Grouper web services.
 cd "$GROUPER_BASE"
@@ -120,21 +135,8 @@ jar xvf ../grouper-ws.war
 cd "$GROUPER_BASE"
 rm -rf "$GROUPER_WS_HOME"
 
-# Download the Grouper installer.
-cd /tmp/patch
-curl -fSL "$GROUPER_BASE_URL/$GROUPER_INS_JAR" -o "$GROUPER_INS_JAR"
-
-# Patch the Grouper API.
-ln -s api.properties grouper.installer.properties
-java -cp .:$GROUPER_INS_JAR edu.internet2.middleware.grouperInstaller.GrouperInstaller
-rm grouper.installer.properties
-
-# Patch the Grouper UI.
-ln -s ui.properties grouper.installer.properties
-java -cp .:$GROUPER_INS_JAR edu.internet2.middleware.grouperInstaller.GrouperInstaller
-rm grouper.installer.properties
-
 # Patch the Grouepr web services.
+cd /tmp/patch
 ln -s ws.properties grouper.installer.properties
 java -cp .:$GROUPER_INS_JAR edu.internet2.middleware.grouperInstaller.GrouperInstaller
 rm grouper.installer.properties
