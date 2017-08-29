@@ -6,16 +6,12 @@ source $(dirname $0)/install-utils.sh
 
 # Install some prerequisites.
 install_curl
-install_jce_extensions
 install_gpg
-import_tomcat_keys
 import_ant_keys
 create_tarball_directory
 download_ant
-download_tomcat
 download_grouper
 install_ant
-install_tomcat
 
 # Install Grouper.
 create_grouper_installation_directories
