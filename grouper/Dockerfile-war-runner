@@ -1,4 +1,4 @@
-FROM jeanblanchard/java:jdk-7
+FROM discoenv/war-runner
 MAINTAINER Dennis Roberts <dennis@cyverse.org>
 ARG git_commit=unknown
 LABEL org.iplantc.de.grouper.git-ref="$git_commit"
@@ -12,16 +12,6 @@ ENV PATH $PATH:$ANT_HOME/bin
 ENV ANT_BASE https://www.apache.org/dist/ant/binaries
 ENV ANT_VERSION 1.9.9
 ENV ANT_URL $ANT_BASE/apache-ant-$ANT_VERSION-bin.tar.gz
-
-# Environment variables for tomcat.
-ENV CATALINA_HOME /opt/tomcat
-ENV TOMCAT_CONF /etc/tomcat
-ENV PATH $CATALINA_HOME/bin:$PATH
-ENV TOMCAT_MAJOR 7
-ENV TOMCAT_VERSION 7.0.65
-ENV TOMCAT_BASE https://archive.apache.org/dist/tomcat
-ENV TOMCAT_TGZ apache-tomcat-$TOMCAT_VERSION.tar.gz
-ENV TOMCAT_TGZ_URL $TOMCAT_BASE/tomcat-$TOMCAT_MAJOR/v$TOMCAT_VERSION/bin/$TOMCAT_TGZ
 
 # Grouper environment variables.
 ENV GROUPER_VERSION 2.3.0
@@ -40,18 +30,27 @@ ENV GROUPER_WS_HOME $GROUPER_BASE/ws
 ENV PATH $GROUPER_HOME/bin:$PATH
 
 # Web application environment variables.
-ENV WEBAPPS_HOME $CATALINA_HOME/webapps
+ENV WEBAPPS_HOME /usr/src/app
 
 # Environment vairables for Bouncy Castle
 ENV BCPROV_BASE http://bouncycastle.org/download
 ENV BCPROV_JAR bcprov-jdk15on-156.jar
 
 COPY install-utils.sh /tmp/install-utils.sh
-COPY install-grouper.sh /tmp/install-grouper.sh
-RUN /tmp/install-grouper.sh \
-    && rm /tmp/install-grouper.sh /tmp/install-utils.sh
+COPY install-grouper-war-runner.sh /tmp/install-grouper-war-runner.sh
+RUN /tmp/install-grouper-war-runner.sh \
+    && rm /tmp/install-grouper-war-runner.sh /tmp/install-utils.sh
 
-WORKDIR $CATALINA_HOME
+RUN ln -s /usr/bin/java /usr/bin/grouper-ui \
+    && ln -s /usr/bin/java /usr/bin/grouper-ws
 
-EXPOSE 8080
-CMD ["catalina.sh", "run"]
+COPY consul.hcl $WEBAPPS_HOME/consul.hcl
+COPY generate-configs.sh /usr/bin/generate-configs.sh
+COPY run-grouper-loader.sh /usr/bin/run-grouper-loader.sh
+COPY run-grouper-ui.sh /usr/bin/run-grouper-ui.sh
+COPy run-grouper-ws.sh /usr/bin/run-grouper-ws.sh
+
+WORKDIR $WEBAPPS_HOME
+
+EXPOSE 80
+CMD ["gsh"]

@@ -1,0 +1,8 @@
+{{ with $base := (printf "configs/%s" (env "DE_ENV")) -}}
+# The URL to use when connecting to the database.
+hibernate.connection.url = {{ key (printf "%s/grouper-db/jdbc-uri" $base) }}
+
+# The credentials used to access the database.
+hibernate.connection.username = {{ key (printf "%s/grouper-db/user" $base) }}
+hibernate.connection.password = {{ key (printf "%s/grouper-db/pass" $base) }}
+{{ end -}}
