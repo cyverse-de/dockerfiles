@@ -1,0 +1,3 @@
+{{ with $base := (printf "configs/%s" (env "DE_ENV")) -}}
+{{ key (printf "%s/grouper/admin-user" $base) }}: {{ key (printf "%s/grouper/admin-pass" $base) }},grouper_user
+{{ end -}}
