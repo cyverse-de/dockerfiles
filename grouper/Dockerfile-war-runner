@@ -41,6 +41,15 @@ COPY install-grouper-war-runner.sh /tmp/install-grouper-war-runner.sh
 RUN /tmp/install-grouper-war-runner.sh \
     && rm /tmp/install-grouper-war-runner.sh /tmp/install-utils.sh
 
+RUN ln -s /usr/bin/java /usr/bin/grouper-ui \
+    && ln -s /usr/bin/java /usr/bin/grouper-ws
+
+COPY consul.hcl $WEBAPPS_HOME/consul.hcl
+COPY generate-configs.sh /usr/bin/generate-configs.sh
+COPY run-grouper-loader.sh /usr/bin/run-grouper-loader.sh
+COPY run-grouper-ui.sh /usr/bin/run-grouper-ui.sh
+COPy run-grouper-ws.sh /usr/bin/run-grouper-ws.sh
+
 WORKDIR $WEBAPPS_HOME
 
 EXPOSE 80
