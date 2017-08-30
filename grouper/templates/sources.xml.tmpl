@@ -82,7 +82,7 @@ Grouper's subject resolver configuration
       <param-name>SECURITY_AUTHENTICATION</param-name>
       <param-value>{{ key (printf "%s/grouper/subject-source-auth-type" $base) }}</param-value>
     </init-param>
-{{ if (key (printf "%s/grouper/subject-source-url" $base)) | regexMatch "^ldaps://" }}
+{{- if (key (printf "%s/grouper/subject-source-url" $base)) | regexMatch "^ldaps://" }}
     <init-param>
         <param-name>pemCaFile</param-name>
         <param-value>{{ key (printf "%s/grouper/subject-source-ca-file" $base) }}</param-value>
@@ -95,8 +95,8 @@ Grouper's subject resolver configuration
         <param-name>pemKeyFile</param-name>
         <param-value>{{ key (printf "%s/grouper/subject-source-key-file" $base) }}</param-value>
     </init-param>
-{{ end }}
-{{ if (key (printf "%s/grouper/subject-source-auth-type" $base)) != 'None' }}
+{{- end -}}
+{{- if (ne (key (printf "%s/grouper/subject-source-auth-type" $base)) "None") }}
     <init-param>
       <param-name>SECURITY_PRINCIPAL</param-name>
       <param-value>{{ key (printf "%s/grouper/subject-source-principal" $base) }}</param-value>
@@ -105,7 +105,7 @@ Grouper's subject resolver configuration
       <param-name>SECURITY_CREDENTIALS</param-name>
       <param-value>{{ key (printf "%s/grouper/subject-source-credentials" $base) }}</param-value>
     </init-param>
-{{ end }}
+{{- end }}
     <init-param>
       <param-name>SubjectID_AttributeType</param-name>
       <param-value>uid</param-value>
