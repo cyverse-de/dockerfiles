@@ -3,49 +3,17 @@
 set -e
 
 install_curl() {
-    apk add --update curl
-}
-
-install_jce_extensions() {
-    mkdir -p /tmp/jce
-    curl -jksSLH "Cookie: oraclelicense=accept-securebackup-cookie" -o /tmp/jce/jce.zip \
-         http://download.oracle.com/otn-pub/java/jce/7/UnlimitedJCEPolicyJDK7.zip
-    unzip -d /tmp/jce -o /tmp/jce/jce.zip
-    cp /tmp/jce/UnlimitedJCEPolicy/*.jar /opt/jdk/jre/lib/security/
-    rm -rf /tmp/jce
-}
-
-install_gpg() {
-    apk add --update gnupg
-}
-
-import_tomcat_keys() {
-    curl -fSL https://www.apache.org/dist/tomcat/tomcat-7/KEYS -o tomcat-keys
-    gpg --import tomcat-keys
-    rm -f tomcat-keys
-}
-
-import_ant_keys() {
-    curl -fSL https://www.apache.org/dist/ant/KEYS -o ant-keys
-    gpg --import ant-keys
-    rm -f ant-keys
+    if [[ -f /etc/alpine-release ]]; then
+        apk add --update curl
+    else
+        apt-get update
+        apt-get install -y curl
+    fi
 }
 
 create_tarball_directory() {
     mkdir -p /tmp/tarballs
     cd /tmp/tarballs
-}
-
-download_ant() {
-    curl -fSL "$ANT_URL" -o apache-ant.tar.gz
-    curl -fSL "$ANT_URL.asc" -o apache-ant.tar.gz.asc
-    gpg --verify apache-ant.tar.gz.asc
-}
-
-download_tomcat() {
-    curl -fSL "$TOMCAT_TGZ_URL" -o tomcat.tar.gz
-    curl -fSL "$TOMCAT_TGZ_URL.asc" -o tomcat.tar.gz.asc
-    gpg --verify tomcat.tar.gz.asc
 }
 
 download_grouper() {
@@ -55,25 +23,12 @@ download_grouper() {
 }
 
 install_ant() {
-    cd /opt
-    tar -xzvf /tmp/tarballs/apache-ant.tar.gz
-    mv "apache-ant-$ANT_VERSION" "$ANT_HOME"
-}
-
-install_tomcat() {
-    cd /opt
-    tar -xzvf /tmp/tarballs/tomcat.tar.gz
-    mv "apache-tomcat-$TOMCAT_VERSION" "$CATALINA_HOME"
-    cd "$CATALINA_HOME"
-    rm bin/*.bat
-    mkdir -p "$TOMCAT_CONF"
-    mv "$CATALINA_HOME/conf/server.xml" "$TOMCAT_CONF/server.xml"
-    ln -s "$TOMCAT_CONF/server.xml" "$CATALINA_HOME/conf/server.xml"
-    mv "$CATALINA_HOME/conf/tomcat-users.xml" "$TOMCAT_CONF/tomcat-users.xml"
-    ln -s "$TOMCAT_CONF/tomcat-users.xml" "$CATALINA_HOME/conf/tomcat-users.xml"
-    rm -f "$CATALINA_HOME/bin/setenv.sh"
-    touch "$TOMCAT_CONF/setenv.sh"
-    ln -s "$TOMCAT_CONF/setenv.sh" "$CATALINA_HOME/bin/setenv.sh"
+    if [[ -f /etc/alpine-release ]]; then
+        apk add --update apache-ant
+    else
+        apt-get update
+        apt-get install -y ant
+    fi
 }
 
 create_grouper_installation_directories() {
@@ -208,9 +163,12 @@ install_grouper_web_services() {
 }
 
 cleanup() {
-    apk del gnupg
-    apk del curl
-    rm -rf /var/cache/apk/*
+    if [[ -f /etc/alpine-release ]]; then
+        apk del curl
+        rm -rf /var/cache/apk/*
+    else
+        apt-get remove -y curl
+    fi
     rm -rf /tmp/configs
     rm -rf /tmp/patch
     rm -rf /tmp/tarballs

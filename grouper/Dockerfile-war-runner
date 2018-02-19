@@ -1,17 +1,10 @@
 FROM discoenv/war-runner
-MAINTAINER Dennis Roberts <dennis@cyverse.org>
+MAINTAINER Sarah Roberts <sarahr@cyverse.org>
 ARG git_commit=unknown
 LABEL org.iplantc.de.grouper.git-ref="$git_commit"
 
 # Copy the configuration files to temporary locations.
 COPY configs /tmp/configs
-
-# Environment variables for ant.
-ENV ANT_HOME /opt/apache-ant
-ENV PATH $PATH:$ANT_HOME/bin
-ENV ANT_BASE https://www.apache.org/dist/ant/binaries
-ENV ANT_VERSION 1.9.9
-ENV ANT_URL $ANT_BASE/apache-ant-$ANT_VERSION-bin.tar.gz
 
 # Grouper environment variables.
 ENV GROUPER_VERSION 2.3.0
