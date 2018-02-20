@@ -9,7 +9,7 @@ ENV LEIN_BASE_URL=https://github.com/technomancy/leiningen/releases/download
 
 WORKDIR /tmp
 
-RUN apk add --update tar gnupg bash openssl && rm -rf /var/cache/apk/*
+RUN apk add --update tar bash openssl && rm -rf /var/cache/apk/*
 
 # Download the whole repo as an archive
 RUN mkdir -p $LEIN_INSTALL \
@@ -19,11 +19,6 @@ RUN mkdir -p $LEIN_INSTALL \
   && mv lein-pkg $LEIN_INSTALL/lein \
   && chmod 0755 $LEIN_INSTALL/lein \
   && wget -q $LEIN_BASE_URL/$LEIN_VERSION/leiningen-$LEIN_VERSION-standalone.zip \
-  && wget -q $LEIN_BASE_URL/$LEIN_VERSION/leiningen-$LEIN_VERSION-standalone.zip.asc \
-  && gpg --keyserver pool.sks-keyservers.net --recv-key 2B72BF956E23DE5E830D50F6002AF007D1A7CC18 \
-  && echo "Verifying Jar file signature ..." \
-  && gpg --verify leiningen-$LEIN_VERSION-standalone.zip.asc \
-  && rm leiningen-$LEIN_VERSION-standalone.zip.asc \
   && mkdir -p /usr/share/java \
   && mv leiningen-$LEIN_VERSION-standalone.zip /usr/share/java/leiningen-$LEIN_VERSION-standalone.jar
 
