@@ -3,12 +3,7 @@
 set -e
 
 install_curl() {
-    if [[ -f /etc/alpine-release ]]; then
-        apk add --update curl
-    else
-        apt-get update
-        apt-get install -y curl
-    fi
+    apk add --update curl
 }
 
 create_tarball_directory() {
@@ -23,12 +18,7 @@ download_grouper() {
 }
 
 install_ant() {
-    if [[ -f /etc/alpine-release ]]; then
-        apk add --update apache-ant
-    else
-        apt-get update
-        apt-get install -y ant
-    fi
+    apk add --update apache-ant
 }
 
 create_grouper_installation_directories() {
@@ -163,12 +153,8 @@ install_grouper_web_services() {
 }
 
 cleanup() {
-    if [[ -f /etc/alpine-release ]]; then
-        apk del curl
-        rm -rf /var/cache/apk/*
-    else
-        apt-get remove -y curl
-    fi
+    apk del curl
+    rm -rf /var/cache/apk/*
     rm -rf /tmp/configs
     rm -rf /tmp/patch
     rm -rf /tmp/tarballs
