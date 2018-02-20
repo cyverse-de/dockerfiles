@@ -3,6 +3,20 @@ MAINTAINER Sarah Roberts <sarahr@cyverse.org>
 ARG git_commit=unknown
 LABEL org.iplantc.de.grouper.git-ref="$git_commit"
 
+RUN apk add --no-cache git
+
+ENV CONSUL_TEMPLATE_BASE=https://releases.hashicorp.com/consul-template
+ENV CONSUL_TEMPLATE_VERSION=0.16.0
+ENV CONSUL_TEMPLATE_SHA256SUM=064b0b492bb7ca3663811d297436a4bbf3226de706d2b76adade7021cd22e156
+ENV CONSUL_TEMPLATE_FILE=consul-template_${CONSUL_TEMPLATE_VERSION}_linux_amd64.zip
+
+ADD ${CONSUL_TEMPLATE_BASE}/${CONSUL_TEMPLATE_VERSION}/${CONSUL_TEMPLATE_FILE} .
+
+RUN echo "${CONSUL_TEMPLATE_SHA256SUM}  ${CONSUL_TEMPLATE_FILE}" | sha256sum -c - \
+    && unzip ${CONSUL_TEMPLATE_FILE} \
+    && mkdir -p /usr/local/bin \
+    && mv consul-template /usr/local/bin/consul-template
+
 # Copy the configuration files to temporary locations.
 COPY configs /tmp/configs
 
@@ -35,17 +49,8 @@ RUN mkdir -p $WEBAPPS_HOME \
     && /tmp/install-grouper.sh \
     && rm /tmp/install-grouper.sh /tmp/install-utils.sh
 
-RUN ln -s /usr/bin/java /usr/bin/grouper-ui \
-    && ln -s /usr/bin/java /usr/bin/grouper-ws
-
 COPY consul.hcl $WEBAPPS_HOME/consul.hcl
 COPY templates $WEBAPPS_HOME/templates
 COPY generate-configs.sh /usr/bin/generate-configs.sh
-COPY run-grouper-loader.sh /usr/bin/run-grouper-loader.sh
-COPY run-grouper-ui.sh /usr/bin/run-grouper-ui.sh
-COPy run-grouper-ws.sh /usr/bin/run-grouper-ws.sh
 
 WORKDIR $WEBAPPS_HOME
-
-EXPOSE 80
-CMD ["gsh"]
