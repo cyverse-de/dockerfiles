@@ -1,27 +1,24 @@
-FROM jeanblanchard/java:jdk-7
-MAINTAINER Dennis Roberts <dennis@cyverse.org>
+FROM clojure:lein-2.7.1-alpine
+MAINTAINER Sarah Roberts <sarahr@cyverse.org>
 ARG git_commit=unknown
 LABEL org.iplantc.de.grouper.git-ref="$git_commit"
 
+RUN apk add --no-cache git
+
+ENV CONSUL_TEMPLATE_BASE=https://releases.hashicorp.com/consul-template
+ENV CONSUL_TEMPLATE_VERSION=0.16.0
+ENV CONSUL_TEMPLATE_SHA256SUM=064b0b492bb7ca3663811d297436a4bbf3226de706d2b76adade7021cd22e156
+ENV CONSUL_TEMPLATE_FILE=consul-template_${CONSUL_TEMPLATE_VERSION}_linux_amd64.zip
+
+ADD ${CONSUL_TEMPLATE_BASE}/${CONSUL_TEMPLATE_VERSION}/${CONSUL_TEMPLATE_FILE} .
+
+RUN echo "${CONSUL_TEMPLATE_SHA256SUM}  ${CONSUL_TEMPLATE_FILE}" | sha256sum -c - \
+    && unzip ${CONSUL_TEMPLATE_FILE} \
+    && mkdir -p /usr/local/bin \
+    && mv consul-template /usr/local/bin/consul-template
+
 # Copy the configuration files to temporary locations.
 COPY configs /tmp/configs
-
-# Environment variables for ant.
-ENV ANT_HOME /opt/apache-ant
-ENV PATH $PATH:$ANT_HOME/bin
-ENV ANT_BASE https://www.apache.org/dist/ant/binaries
-ENV ANT_VERSION 1.9.9
-ENV ANT_URL $ANT_BASE/apache-ant-$ANT_VERSION-bin.tar.gz
-
-# Environment variables for tomcat.
-ENV CATALINA_HOME /opt/tomcat
-ENV TOMCAT_CONF /etc/tomcat
-ENV PATH $CATALINA_HOME/bin:$PATH
-ENV TOMCAT_MAJOR 7
-ENV TOMCAT_VERSION 7.0.65
-ENV TOMCAT_BASE https://archive.apache.org/dist/tomcat
-ENV TOMCAT_TGZ apache-tomcat-$TOMCAT_VERSION.tar.gz
-ENV TOMCAT_TGZ_URL $TOMCAT_BASE/tomcat-$TOMCAT_MAJOR/v$TOMCAT_VERSION/bin/$TOMCAT_TGZ
 
 # Grouper environment variables.
 ENV GROUPER_VERSION 2.3.0
@@ -40,7 +37,7 @@ ENV GROUPER_WS_HOME $GROUPER_BASE/ws
 ENV PATH $GROUPER_HOME/bin:$PATH
 
 # Web application environment variables.
-ENV WEBAPPS_HOME $CATALINA_HOME/webapps
+ENV WEBAPPS_HOME /usr/src/app
 
 # Environment vairables for Bouncy Castle
 ENV BCPROV_BASE http://bouncycastle.org/download
@@ -48,10 +45,12 @@ ENV BCPROV_JAR bcprov-jdk15on-156.jar
 
 COPY install-utils.sh /tmp/install-utils.sh
 COPY install-grouper.sh /tmp/install-grouper.sh
-RUN /tmp/install-grouper.sh \
+RUN mkdir -p $WEBAPPS_HOME \
+    && /tmp/install-grouper.sh \
     && rm /tmp/install-grouper.sh /tmp/install-utils.sh
 
-WORKDIR $CATALINA_HOME
+COPY consul.hcl $WEBAPPS_HOME/consul.hcl
+COPY templates $WEBAPPS_HOME/templates
+COPY generate-configs.sh /usr/bin/generate-configs.sh
 
-EXPOSE 8080
-CMD ["catalina.sh", "run"]
+WORKDIR $WEBAPPS_HOME
