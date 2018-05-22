@@ -1,0 +1,22 @@
+JENKINS_CREDS = [
+    [
+        $class: 'UsernamePasswordMultiBinding',
+        credentialsId: 'jenkins-docker-credentials',
+        passwordVariable: 'DOCKER_PASSWORD',
+        usernameVariable: 'DOCKER_USERNAME'
+    ]
+]
+
+node('docker') {
+    git url: "https://github.com/cyverse-de/dockerfiles"
+    dir('de-nginx') {
+        stage('Build & push image') {
+            withCredentials(JENKINS_CREDS) {
+                sh """docker build --rm -t discoenv/de-nginx:master . && \\
+                      docker login -u \"\$DOCKER_USERNAME\" -p \"\$DOCKER_PASSWORD\" && \\
+                      docker push discoenv/de-nginx:master && \\
+                      docker logout"""
+            }
+        }
+    }
+}
