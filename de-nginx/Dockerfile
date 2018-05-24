@@ -1,4 +1,4 @@
-FROM nginx
+FROM nginx:perl
 MAINTAINER Sarah Roberts <sarahr@cyverse.org>
 
 COPY prod.crt /usr/share/ca-certificates/prod.crt
