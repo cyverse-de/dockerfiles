@@ -1,6 +1,6 @@
 FROM rocker/rstudio:3.5.0
 
-RUN apt-get update && apt-get install -y nginx supervisor
+RUN apt-get update && apt-get install -y nginx supervisor curl wget
 
 ADD https://github.com/hairyhenderson/gomplate/releases/download/v2.5.0/gomplate_linux-amd64 /usr/bin/gomplate
 RUN chmod a+x /usr/bin/gomplate
