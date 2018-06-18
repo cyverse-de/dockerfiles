@@ -1,6 +1,8 @@
-FROM postgres:9.5
+FROM postgres:9.6
 
-RUN apt-get update && apt-get install -y openjdk-7-jre-headless netcat \
+COPY stretch-backports.list /etc/apt/sources.list.d/
+
+RUN apt-get update && apt-get install -y openjdk-8-jre-headless netcat \
   && rm -rf /var/lib/apt/lists/*
 
 COPY database.tar.gz /database.tar.gz
