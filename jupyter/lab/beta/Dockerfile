@@ -13,12 +13,22 @@ RUN wget -qO - https://packages.irods.org/irods-signing-key.asc | apt-key add - 
     && apt-get update \
     && apt-get install -y irods-icommands
 
+
+RUN chown -R jovyan /opt/conda/
+
 USER jovyan
 
+RUN conda update -n base conda
+RUN conda install jupyterlab=0.33
+RUN jupyter lab --version
+RUN jupyter labextension install @jupyterlab/hub-extension
+RUN	jupyter labextension install @jupyter-widgets/jupyterlab-manager@0.36
+RUN	jupyter labextension install jupyterlab_bokeh
+
 # Install the irods plugin for jupyter lab
-RUN pip install jupyterlab_irods
-RUN jupyter serverextension enable --py jupyterlab_irods
-RUN jupyter labextension install @towicode/jupyterlab_irods
+#RUN pip install jupyterlab_irods
+#RUN jupyter serverextension enable --py jupyterlab_irods
+#RUN jupyter labextension install @towicode/jupyterlab_irods
 
 ENTRYPOINT ["jupyter"]
 CMD ["lab", "--no-browser"]
