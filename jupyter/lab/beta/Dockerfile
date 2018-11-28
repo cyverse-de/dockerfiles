@@ -35,9 +35,9 @@ RUN jupyter lab --version \
                                     jupyterlab_bokeh@0.6.3
 
 # Install the irods plugin for jupyter lab
-RUN pip install jupyterlab_irods==0.9.0 \
+RUN pip install jupyterlab_irods==2.0.1 \
     && jupyter serverextension enable --py jupyterlab_irods \
-    && jupyter labextension install ijab@2.0.0
+    && jupyter labextension install ijab@2.0.1
 
 ENTRYPOINT ["jupyter"]
 CMD ["lab", "--no-browser"]
