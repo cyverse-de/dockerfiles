@@ -1,4 +1,4 @@
-FROM rocker/rstudio:3.5.0
+FROM rocker/rstudio:3.5.2
 
 RUN apt-get update \
     && apt-get install -y lsb wget apt-transport-https python2.7 python-requests curl supervisor nginx gnupg2
@@ -17,6 +17,9 @@ COPY rserver.conf /etc/rstudio/rserver.conf
 COPY supervisor-nginx.conf /etc/supervisor/conf.d/nginx.conf
 COPY supervisor-rstudio.conf /etc/supervisor/conf.d/rstudio.conf
 
-ENV REDIRECT_URL "http://localhost/"
+ENV REDIRECT_URL "http://localhost"
+ENV PASSWORD "rstudio1"
+
+RUN bash /etc/cont-init.d/userconf
 
 ENTRYPOINT ["/usr/local/bin/run.sh"]
