@@ -1,3 +1,4 @@
+# -*-dockerfile-*-
 FROM discoenv/war-runner
 MAINTAINER Sarah Roberts <sarahr@cyverse.org>
 ARG git_commit=unknown
@@ -26,8 +27,8 @@ ENV PATH $GROUPER_HOME/bin:$PATH
 ENV WEBAPPS_HOME /usr/src/app
 
 # Environment vairables for Bouncy Castle
-ENV BCPROV_BASE http://bouncycastle.org/download
-ENV BCPROV_JAR bcprov-jdk15on-156.jar
+ENV BCPROV_BASE https://www.bouncycastle.org/download
+ENV BCPROV_JAR bcprov-jdk15on-165.jar
 
 COPY install-utils.sh /tmp/install-utils.sh
 COPY install-grouper.sh /tmp/install-grouper.sh
