@@ -22,7 +22,7 @@ RUN echo "${CONSUL_TEMPLATE_SHA256SUM}  ${CONSUL_TEMPLATE_FILE}" | sha256sum -c 
 COPY configs /tmp/configs
 
 # Grouper environment variables.
-ENV GROUPER_VERSION 2.3.0
+ENV GROUPER_VERSION 2.4.0
 ENV GROUPER_BASE_URL http://software.internet2.edu/grouper/release/$GROUPER_VERSION
 ENV GROUPER_API_TGZ grouper.apiBinary-$GROUPER_VERSION.tar.gz
 ENV GROUPER_UI_TGZ grouper.ui-$GROUPER_VERSION.tar.gz

@@ -48,7 +48,9 @@ install_grouper_api() {
     # Copy the custom configuration files to the configuration directory.
     mv /tmp/configs/api/ehcache.xml "$GROUPER_HOME/conf/"
     mv /tmp/configs/api/grouper.properties "$GROUPER_HOME/conf/"
+    mv /tmp/configs/api/grouper.client.properties "$GROUPER_HOME/conf/"
     mv /tmp/configs/api/grouper.hibernate.properties "$GROUPER_HOME/conf/"
+    mv /tmp/configs/api/grouper.morphString.properties "$GROUPER_HOME/conf/"
     mv /tmp/configs/api/grouper-loader.properties "$GROUPER_HOME/conf/"
     mv /tmp/configs/api/subject.properties "$GROUPER_HOME/conf"
     mv /tmp/configs/api/log4j.properties "$GROUPER_HOME/conf"
