@@ -1,7 +1,0 @@
-{{ with $base := (printf "configs/%s" (env "DE_ENV")) -}}
-# The name of the Grouper environment.
-grouper.env.name = {{ key (printf "%s/grouper/api-env-name" $base) }}
-
-# The URL for the grouper UI.
-grouper.ui.url = {{ key (printf "%s/grouper/ui-base" $base) }}
-{{ end -}}
