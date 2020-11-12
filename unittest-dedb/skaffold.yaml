@@ -1,0 +1,22 @@
+apiVersion: skaffold/v1
+kind: Config
+metadata:
+  name: app-exposer
+build:
+    artifacts:
+    - image: discoenv/unittest-dedb
+      custom:
+        buildCommand: ./create-image.sh
+        dependencies:
+          paths:
+          - create-image.sh
+          - Dockerfile
+          - setup-dev-database.sh
+          - setup-grouper-database.sh
+          - setup-pg-hbaconf.sh
+          - update-dev-database.sh
+          - wait-for-port.sh
+deploy:
+  kubectl:
+    manifests:
+    - k8s/unittest-dedb.yaml
