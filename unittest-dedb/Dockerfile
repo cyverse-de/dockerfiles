@@ -1,8 +1,8 @@
-FROM postgres:9.6
+FROM postgres:12.4
 
 COPY stretch-backports.list /etc/apt/sources.list.d/
 
-RUN apt-get update && apt-get install -y openjdk-8-jre-headless netcat \
+RUN apt-get update && apt-get install -y openjdk-11-jre-headless netcat \
   && rm -rf /var/lib/apt/lists/*
 
 COPY database.tar.gz /database.tar.gz
