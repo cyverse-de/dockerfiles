@@ -9,6 +9,8 @@ Options:
     -R - Do not retrieve database tarballs and facepalm uberjar
 EOF
 
+BUILD_IMAGE=${IMAGE:-discoenv/unittest-dedb:dev}
+
 # Parse the command-line options.
 retrieve=true
 while getopts :rR opt; do
@@ -53,6 +55,10 @@ docker run -d --name dedb discoenv/de-db-loader:dev
 docker exec dedb wait-for-port.sh -p 5432
 docker exec dedb setup-dev-database.sh
 docker exec dedb setup-grouper-database.sh
-docker commit dedb discoenv/unittest-dedb:dev
+docker commit dedb $BUILD_IMAGE
 docker kill dedb
 docker rm -v dedb
+
+if [ "$PUSH_IMAGE" = true ]; then
+    docker push $BUILD_IMAGE
+fi
