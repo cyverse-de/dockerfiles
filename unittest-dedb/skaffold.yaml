@@ -5,8 +5,22 @@ metadata:
 build:
     artifacts:
     - image: discoenv/unittest-dedb
+      sync:
+        manual:
+          - src: database.tar.gz
+            dest: /
+          
+          - src: metadata-db.tar.gz
+            dest: /
+          
+          - src: notification-db.tar.gz
+            dest: /
+          
+          - src: permissions-db.tar.gz
+            dest: /
+
       custom:
-        buildCommand: ./create-image.sh
+        buildCommand: ./create-image.sh -R -G
         dependencies:
           paths:
           - create-image.sh
@@ -16,6 +30,7 @@ build:
           - setup-pg-hbaconf.sh
           - update-dev-database.sh
           - wait-for-port.sh
+          - facepalm-standalone.jar
 deploy:
   kubectl:
     manifests:

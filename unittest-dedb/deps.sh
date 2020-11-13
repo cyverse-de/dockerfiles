@@ -84,24 +84,3 @@ if [ "$retrieve" = false -a "$builddb" = true ]; then
     cd $cwd/notifications-db && ./build.sh && cp notification-db.tar.gz $cwd
     cd $cwd
 fi
-
-if [ $(docker ps | grep '\sdedb$' | wc -l) -gt 0 ]; then
-    docker kill dedb
-fi
-
-if [ $(docker ps -a | grep '\sdedb$' | wc -l) -gt 0 ]; then
-    docker rm -v dedb
-fi
-
-docker build --rm -t discoenv/de-db-loader:dev .
-docker run -d --name dedb discoenv/de-db-loader:dev
-docker exec dedb wait-for-port.sh -p 5432
-docker exec dedb setup-dev-database.sh
-docker exec dedb setup-grouper-database.sh
-docker commit dedb $BUILD_IMAGE
-docker kill dedb
-docker rm -v dedb
-
-if [ "$PUSH_IMAGE" = true ]; then
-    docker push $BUILD_IMAGE
-fi
