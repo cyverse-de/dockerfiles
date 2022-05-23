@@ -5,8 +5,17 @@ set -e
 # The K8s namespace to search for resources.
 NAMESPACE=${NAMESPACE:-prod}
 
-# The host and port to use for hitting the k8s API.
-HOST_PORT=${HOST_PORT:-'localhost:8001'}
+# THE URL to the api server
+APISERVER=${APISERVER:-'https://kubernetes.default.svc'}
+
+# The path to the service account token.
+SERVICEACCOUNT=${SERVICEACCOUNT:-'/var/run/secrets/kubernetes.io/serviceaccount'}
+
+# The service accounts bearer token
+token=$(cat ${SERVICEACCOUNT}/token)
+
+# The ca certificate
+cacert=${SERVICEACCOUNT/ca.crt}
 
 # The delimiter to use when separating values in the output.
 DELIMITER=${DELIMITER:-','}
@@ -33,10 +42,10 @@ full_selector=$LABEL_SELECTOR=$SELECTOR_VALUE
 encoded_selector=$(echo -n "$full_selector" | jq -sRr @uri)
 
 # The full k8s API URL to GET when looking up a list of pods.
-reqURL="http://$HOST_PORT/api/v1/namespaces/$NAMESPACE/pods?labelSelector=$encoded_selector"
+reqURL="${APISERVER}/api/v1/namespaces/${NAMESPACE}/pods?labelSelector=$encoded_selector"
 
 # The names of the pods, separated by delimiter.
-output=$(curl --silent $reqURL | jq -r '.items[].metadata.name' | sed -e 's/^/tls:\/\//' | paste -s -d, -)
+output=$(curl --cacert ${cacert} --header "Authorization: Bearer ${token}" --silent $reqURL | jq -r '.items[].metadata.name' | sed -e 's/^/tls:\/\//' | paste -s -d, -)
 
 # Make sure the directory that will contain the dotenv file actually exists.
 if [ ! -d $dotenv_dir ]; then 
