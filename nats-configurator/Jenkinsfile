@@ -1,0 +1,12 @@
+node('docker') {
+    git url: "https://github.com/cyverse-de/dockerfiles"
+    dir('nats-configurator') {
+        stage('Build & push image') {
+            withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'jenkins-docker-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME']]) {
+                sh """docker build --rm -t harbor.cyverse.org/de/nats-configurator . && \\
+                      docker push harbor.cyverse.org/de/nats-configurator && \\
+                      docker logout"""
+            }
+        }
+    }
+}
