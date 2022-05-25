@@ -45,7 +45,7 @@ encoded_selector=$(echo -n "$full_selector" | jq -sRr @uri)
 reqURL="${APISERVER}/api/v1/namespaces/${NAMESPACE}/pods?labelSelector=$encoded_selector"
 
 # The names of the pods, separated by delimiter.
-output=$(curl --cacert ${cacert} --header "Authorization: Bearer ${token}" --silent $reqURL | jq -r '.items[].metadata.name' | sed -e 's/^/tls:\/\//' | paste -s -d, -)
+output=$(curl --cacert ${cacert} --header "Authorization: Bearer ${token}" --silent $reqURL | jq -r '.items[].metadata.name' | sed -e 's/^/nats:\/\//' | sed -e 's/$/\.nats/' | paste -s -d, -)
 
 # Make sure the directory that will contain the dotenv file actually exists.
 if [ ! -d $dotenv_dir ]; then 
