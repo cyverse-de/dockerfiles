@@ -15,7 +15,7 @@ SERVICEACCOUNT=${SERVICEACCOUNT:-'/var/run/secrets/kubernetes.io/serviceaccount'
 token=$(cat ${SERVICEACCOUNT}/token)
 
 # The ca certificate
-cacert=${SERVICEACCOUNT/ca.crt}
+cacert=${SERVICEACCOUNT}/ca.crt
 
 # The delimiter to use when separating values in the output.
 DELIMITER=${DELIMITER:-','}
