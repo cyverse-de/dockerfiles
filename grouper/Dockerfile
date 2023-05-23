@@ -1,4 +1,4 @@
-FROM i2incommon/grouper:2.5.29
+FROM i2incommon/grouper:2.5.68
 
 # Update the base configuration files to look in /etc/grouper for configuration files.
 COPY update_base_configs.sh .
