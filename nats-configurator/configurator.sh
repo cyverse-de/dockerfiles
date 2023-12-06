@@ -47,7 +47,7 @@ dotenv_dir=$(dirname $DOTENV_FILEPATH)
 # The names of the pods, separated by delimiter.
 #output=$(curl --cacert ${cacert} --header "Authorization: Bearer ${token}" --silent $reqURL | jq -r '.items[].metadata.name' | sed -e 's/^/nats:\/\//' | sed -e 's/$/\.nats/' | paste -s -d, -)
 
-output="nats://nats-0.nats,nats://nats-1.nats,nats://nats-2.nats,nats://nats-3.nats"
+output=${output:-"nats://nats-0.nats,nats://nats-1.nats,nats://nats-2.nats,nats://nats-3.nats"}
 
 # Make sure the directory that will contain the dotenv file actually exists.
 if [ ! -d $dotenv_dir ]; then 
