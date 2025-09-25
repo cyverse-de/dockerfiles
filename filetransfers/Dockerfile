@@ -1,4 +1,3 @@
-FROM ghcr.io/awesome-containers/static-coreutils:latest AS coreutils
-FROM harbor.cyverse.org/de/gocmd:latest
-COPY --from=coreutils /bin/tee /bin/tee
-
+FROM cyverse/gocmd:latest As gocmd
+FROM debian:stable-slim
+COPY --from=gocmd /usr/bin/gocmd /usr/bin/gocmd
