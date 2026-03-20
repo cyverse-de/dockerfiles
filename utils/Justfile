@@ -1,0 +1,18 @@
+alp_repotag := "harbor.cyverse.org/de/utils:alpine-latest"
+deb_repotag := "harbor.cyverse.org/de/utils:debian-latest"
+
+alpine:
+    docker buildx build -f Dockerfile.alpine --platform linux/amd64 -t "{{alp_repotag}}" .
+
+debian:
+    docker buildx build -f Dockerfile --platform linux/amd64 -t "{{deb_repotag}}" .
+
+build: alpine debian
+
+push_alpine:
+    docker push "{{alp_repotag}}"
+
+push_debian:
+    docker push "{{deb_repotag}}"
+
+push: push_alpine push_debian
